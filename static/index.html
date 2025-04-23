@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management App</title>
+    <style>
+        /* Same Styles as before */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #333;
+        }
+        .header p {
+            font-size: 1.2em;
+            color: #555;
+        }
+
+        .product-list {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .product-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 250px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .product-card:hover {
+            transform: scale(1.05);
+        }
+
+        .product-card h3 {
+            margin: 10px 0;
+            color: #333;
+        }
+
+        .product-card p {
+            color: #777;
+        }
+
+        .btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+
+        .popup p {
+            margin: 0;
+            color: #333;
+        }
+
+        .popup button {
+            margin-top: 10px;
+            background-color: #28a745;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Order Management App</h1>
+            <p>Browse products, add to cart, and place your order</p>
+        </div>
+
+        <!-- Product List -->
+        <div class="product-list" id="product-list">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+
+        <!-- View Cart Button -->
+        <button class="btn" onclick="viewCart()">View Cart</button>
+
+        <!-- Popup for Product Added -->
+        <div class="overlay" id="overlay"></div>
+        <div class="popup" id="popup">
+            <p>Product added to cart!</p>
+            <button class="btn" onclick="closePopup()">Close</button>
+        </div>
+    </div>
+
+    <script>
+        // Simulating Product Data (Adobe Programs with MYR price)
+        const products = [
+            { id: 1, name: 'Adobe Photoshop', price: 350, description: 'Professional photo editing software' },
+            { id: 2, name: 'Adobe Illustrator', price: 350, description: 'Vector graphics and illustration software' },
+            { id: 3, name: 'Adobe Premiere Pro', price: 450, description: 'Video editing software for filmmakers' }
+        ];
+
+        // Cart initialization
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        // Function to load products dynamically
+        function loadProducts() {
+            const productListContainer = document.getElementById('product-list');
+            let html = '';
+            products.forEach(product => {
+                html += `
+                    <div class="product-card" id="product-${product.id}">
+                        <h3>${product.name}</h3>
+                        <p>RM ${product.price}</p>
+                        <p>${product.description}</p>
+                        <button class="btn" onclick="addToCart(${product.id}, '${product.name}', ${product.price})">Add to Cart</button>
+                    </div>
+                `;
+            });
+            productListContainer.innerHTML = html;
+        }
+
+        // Function to add item to cart
+        function addToCart(id, name, price) {
+            const existingItem = cart.find(item => item.id === id);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ id, name, price, quantity: 1 });
+            }
+            showPopup(); // Show the popup when an item is added to the cart
+            localStorage.setItem('cart', JSON.stringify(cart)); // Store cart in localStorage
+        }
+
+        // Function to show the popup
+        function showPopup() {
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        // Function to close the popup
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+
+        // Function to view the cart
+        function viewCart() {
+            window.location.href = 'cart.html'; // Navigate to the cart page
+        }
+
+        // Load the products when the page is loaded
+        window.onload = function() {
+            loadProducts();
+        }
+    </script>
+</body>
+</html>
